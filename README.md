@@ -30,19 +30,13 @@ The protocol consists of two parties: Liquidity Providers and Borrowers
 
 ### Interest Model
 
-- The interest model is based on Ellipse style graphical representation.
-- Rellying on such a graph makes the chances of people taking out 100% underlying liquidity goes down, since the more we approach towards the end the more interest needs to be paid. Consequently there is liquidity availaible to withdraw for LP.
-- The x-axis of the graph has range 0-1 since it is the ration between `Borrowed/Total Liquidity`. Note: The Borrowed amount, during calculation is done by adding the amount requested to borrow to the equation.
-- The y-axis currently is hardcode to 5 - 10 percentage. Later on would be moved to a governance model.
-- The graph is formed, by shifting the Ellipse towards y-axis, such that the bottom-most point is Ymin.
-- This implies the equ. formed would be:
+- The interest is calculated using piecewise linear equation.
+- The first part is if B/T ratio  < 80 % then : ```y = mx + c``` with `m = 10% of Ymax-Ymin `
+- The second part if if B/T >= 80% then: ```y = mx +c``` with `m = 80% of Ymax - Ymin`
+- The above models discourages people to borrow all the liquidity availaible, hence leaving funds for the LP to withdraw if required.
+- The model also discourages huge chunks of loans, since the `B/T` ration discussed above is the value after the loan would be taken out from i.e. `B=B+value`
 
-  `x/(a^2) + ((y-Ymax)^2)/((Ymax - Ymin)^2) = 1`
-
-  Solving we get: `y = Ymax - (sqrt( 1 - x^2 )) * (Ymax - Ymin )`
-
-  where `x = B/T`
-
+ 
 ### Security Deposit
 
 - Security Deposit is calculated using: `numberOfDays * Amount * SecurityRate`
