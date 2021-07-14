@@ -45,7 +45,7 @@ Note: The math is currenlty under more research since there are some disparancy 
 
 The following are yet to be implemenated. These are features to be included in sprint 2 or 3. Feel free to contact me, in case you are interested on working on any of the following. Also applicable to any issues listed in the project repo.
 
-### TODO ( Target to finish a few before presenting to HackMoney Judges )
+### TODO
 
 - Aave/Compound integration.
 - Fix the liquidation function to point to the reserve deposited rather than the original liquidity ( currently a bug )
