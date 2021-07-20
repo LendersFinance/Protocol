@@ -15,6 +15,7 @@ contract("Factory Contract", (accounts) => {
   let factory;
   let unERC20ProxyContract;
   let urERC20contract;
+  let proxyWrapped;
   let interestRate;
   let dataProvider;
 
@@ -86,6 +87,11 @@ contract("Factory Contract", (accounts) => {
         await daiTokenWrapper.methods.getTotalLiquidity().call(),
         4000
       );
+
+      const getLiquidityFromDataProvider = await dataProvider.getTotalLiquidity(
+        dai.address
+      );
+      assert.equal(getLiquidityFromDataProvider, 4000);
     });
 
     it("withdraw liquidity", async () => {
@@ -94,6 +100,15 @@ contract("Factory Contract", (accounts) => {
         await daiTokenWrapper.methods.getTotalLiquidity().call(),
         3800
       );
+
+      const getLiquidityFromDataProvider = await dataProvider.getTotalLiquidity(
+        dai.address
+      );
+
+      assert.equal(getLiquidityFromDataProvider, 3800);
+    });
+
+    it("add back liquiditiy", async () => {
       await factory.addLiquidity(200, dai.address);
       assert.equal(
         await daiTokenWrapper.methods.getTotalLiquidity().call(),
@@ -110,6 +125,17 @@ contract("Factory Contract", (accounts) => {
       assert.equal(dataInput[1], 5);
       assert.equal(dataInput[2], 0);
       assert.equal(dataInput[3], 4000);
+    });
+
+    it("number of contracts is stored correctly", async () => {
+      const numberOfContracts = await dataProvider.getContracts();
+      assert.equal(numberOfContracts.length, 1);
+      assert.equal(dai.address, numberOfContracts[0][0]);
+    });
+
+    it("return proxy function", async () => {
+      const proxyAddress = await dataProvider.returnProxy(dai.address);
+      assert.equal(proxyAddress, daiTokenWrapper._address);
     });
 
     // it("Interest Calculation Functions Working", async () => {
@@ -152,6 +178,10 @@ contract("Factory Contract", (accounts) => {
         await daiTokenWrapper.methods.balanceOf(accounts[2]).call(),
         1500
       );
+
+      const getUsedLiquidiityFromDataProvider =
+        await dataProvider.getUsedLiquidity(dai.address);
+      assert(getUsedLiquidiityFromDataProvider, 1500);
     });
 
     it("accounts[2] paybacks the loan", async () => {
@@ -161,6 +191,23 @@ contract("Factory Contract", (accounts) => {
         await daiTokenWrapper.methods.balanceOf(accounts[2]).call(),
         500
       );
+    });
+
+    it("getUserDetails() function", async () => {
+      const dataUser = await dataProvider.getUserDetailsForGivenContract(
+        accounts[2],
+        dai.address
+      );
+
+      assert(dataUser.borrowedAmount, 500);
+
+      const dataLiquiditiyProvider =
+        await dataProvider.getUserDetailsForGivenContract(
+          accounts[0],
+          dai.address
+        );
+
+      assert(dataUser.borrowedAmount, 4000);
     });
 
     // balanceSupply Test

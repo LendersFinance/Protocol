@@ -40,6 +40,12 @@ interface IDataProvider {
         uint256 amount
     ) external;
 
+    function updateStatusPaybackLoan(
+        address addrUser,
+        address contractAddr,
+        uint256 amount
+    ) external;
+
     function updateStatusLiquidityIncr(
         address addrUser,
         address contractAddr,

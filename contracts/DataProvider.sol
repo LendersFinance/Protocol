@@ -37,7 +37,7 @@ contract DataProvider is IDataProvider {
         core = _core;
     }
 
-    function getUserDetailForGivenContract(address user, address contractAddr)
+    function getUserDetailsForGivenContract(address user, address contractAddr)
         public
         view
         returns (ContractDetails memory)
@@ -53,6 +53,15 @@ contract DataProvider is IDataProvider {
     ) external override {
         ContractDetails storage user = userMapping[addrUser][contractAddr];
         user.borrowedAmount = amount;
+    }
+
+    function updateStatusPaybackLoan(
+        address addrUser,
+        address contractAddr,
+        uint256 amount
+    ) external override {
+        ContractDetails storage user = userMapping[addrUser][contractAddr];
+        user.borrowedAmount -= amount;
     }
 
     function updateStatusLiquidityIncr(

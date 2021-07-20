@@ -38,6 +38,7 @@ contract LendersFactory is ILendersFactory {
     }
 
     event LiquidityAdded(address sender, IERC20 token, uint256 amount);
+    event LiquidityWithdrawn(address sender, IERC20 token, uint256 amount);
 
     function createLiquidityContract(
         address token,
@@ -102,6 +103,8 @@ contract LendersFactory is ILendersFactory {
         );
 
         liquidityContract.decreaseSupply(amount, msg.sender);
+
+        emit LiquidityWithdrawn(msg.sender, token, amount);
     }
 
     function issueLoan(
@@ -122,6 +125,11 @@ contract LendersFactory is ILendersFactory {
     function paybackLoan(IERC20 token, uint256 amount) external override {
         IUNERC20 liquidityContract = IUNERC20(getContractAddress(token));
         liquidityContract.paybackLoan(amount, msg.sender);
+        dataProvider.updateStatusPaybackLoan(
+            msg.sender,
+            address(token),
+            amount
+        );
     }
 
     function balanceSupply(IERC20 token) external returns (uint256) {

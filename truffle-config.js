@@ -50,7 +50,7 @@ module.exports = {
       provider: () => {
         return new HDWalletProvider({
           mnemonic: process.env.mnemonic,
-          providerOrUrl: "https://api.s0.b.hmny.io", // https://api.s0.t.hmny.io for mainnet
+          providerOrUrl: "https://api.s0.pops.one", // https://api.s0.t.hmny.io for mainnet
           derivationPath: `m/44'/1023'/0'/0/`,
         })
       },
@@ -75,14 +75,14 @@ module.exports = {
   // Configure your compilers
   compilers: {
     solc: {
-      version: "0.8.2", // Fetch exact version from solc-bin (default: truffle's version)
+      version: "0.8.4", // Fetch exact version from solc-bin (default: truffle's version)
       // docker: false, // Use "0.5.1" you've installed locally with docker (default: false)
       // settings: {
       //   // See the solidity docs for advice about optimization and evmVersion
-      optimizer: {
-        enabled: true,
-        runs: 200,
-      },
+      // optimizer: {
+      //   enabled: true,
+      //   runs: 200,
+      // },
       // },
     },
   },
