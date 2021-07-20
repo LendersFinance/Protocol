@@ -15,7 +15,6 @@ contract("Factory Contract", (accounts) => {
   let factory;
   let unERC20ProxyContract;
   let urERC20contract;
-  let proxyWrapped;
   let interestRate;
   let dataProvider;
 
@@ -75,6 +74,12 @@ contract("Factory Contract", (accounts) => {
       assert.equal(name, "Dai");
     });
 
+    it("number of contracts is stored correctly", async () => {
+      const numberOfContracts = await dataProvider.getContracts();
+      assert.equal(numberOfContracts.length, 1);
+      assert.equal(dai.address, numberOfContracts[0][0]);
+    });
+
     it("adding liquidity", async () => {
       // approve dai spending
       await dai.approve(factory.address, 5000);
@@ -116,7 +121,7 @@ contract("Factory Contract", (accounts) => {
       );
     });
 
-    it("DataProvider tests", async () => {
+    it("interest values tests", async () => {
       const dataInput = await dataProvider.getValuesForInterestCalculation(
         daiAddress
       );
@@ -125,12 +130,6 @@ contract("Factory Contract", (accounts) => {
       assert.equal(dataInput[1], 5);
       assert.equal(dataInput[2], 0);
       assert.equal(dataInput[3], 4000);
-    });
-
-    it("number of contracts is stored correctly", async () => {
-      const numberOfContracts = await dataProvider.getContracts();
-      assert.equal(numberOfContracts.length, 1);
-      assert.equal(dai.address, numberOfContracts[0][0]);
     });
 
     it("return proxy function", async () => {
