@@ -24,6 +24,13 @@ contract LendersFactory is ILendersFactory {
 
     mapping(IERC20 => address) proxyMapping;
 
+    event PaidInterest(
+        address sender,
+        IERC20 token,
+        uint256 amount,
+        uint256 numberOfDays
+    );
+
     constructor(
         address _implementation,
         address _tokenImplementation,
@@ -156,6 +163,7 @@ contract LendersFactory is ILendersFactory {
             "Not the entire interest amount deposited"
         );
         dataProvider.setInterestPaidStatus(msg.sender, amount, true);
+        emit PaidInterest(msg.sender, token, amount, numberOfDays);
     }
 
     function getContractAddress(IERC20 token) public view returns (address) {

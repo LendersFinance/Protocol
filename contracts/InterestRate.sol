@@ -35,7 +35,7 @@ contract InterestRateStatergy is Math {
         return (interest, security);
     }
 
-    // need to redesign to accomodate decimals
+    // amount in wad
     function calculateInterest(uint256 amount, IUNERC20 tokenProxy)
         internal
         view
@@ -45,35 +45,16 @@ contract InterestRateStatergy is Math {
         (uint256 ymax, uint256 ymin, uint256 B, uint256 T) =
             dataProvider.getValuesForInterestCalculation(tokenProxy);
 
-        // uint256 ymax = 10;
-        // uint256 ymin = 5;
-        // uint256 B = 0;
-        // uint256 T = 4000;
-
-        // ymax = ymax * WAD;
-        // ymin = ymin * WAD;
-        // B = B * WAD;
-        // T = T * WAD;
-        // amount = amount * WAD;
-
-        // uint256 x = B.add(amount).wadDiv(T);
-        // uint256 sqFactor =
-        //     x.wadMul(x).wadMul((ymax - ymin).wadMul(ymax - ymin));
-
-        // uint256 ymax2 = ymax.wadMul(ymax);
-        // uint256 ymin2 = ymin.wadMul(ymin);
-        // uint256 twoyminymax = ymin.wadMul(ymax).wadMul(2);
-
-        // uint256 added = ymax2.add(ymin2).add(twoyminymax);
-        // uint256 sqroot = sqrt(added.add(sqFactor));
-
-        // uint256 y = ymax.sub(sqroot);
-        // y = y / WAD;
-
-        uint256 x = (B.add(amount)).div(T);
+        uint256 x = (B.add(amount)).wadDiv(T);
         uint256 m = (ymax.sub(ymin));
 
-        uint256 y = (m.mul(x)).add(ymin);
+        if (x < WAD / 10) {
+            m = m.mul(10 * WAD).wadDiv(100 * WAD);
+        } else {
+            m = m.mul(80 * WAD).wadDiv(100 * WAD);
+        }
+
+        uint256 y = m.wadMul(x) + (ymin * WAD);
         return y;
     }
 

@@ -31,12 +31,11 @@ The protocol consists of two parties: Liquidity Providers and Borrowers
 ### Interest Model
 
 - The interest is calculated using piecewise linear equation.
-- The first part is if B/T ratio  < 80 % then : ```y = mx + c``` with `m = 10% of Ymax-Ymin `
-- The second part if if B/T >= 80% then: ```y = mx +c``` with `m = 80% of Ymax - Ymin`
+- The first part is if B/T ratio < 80 % then : `y = mx + c` with `m = 10% of Ymax-Ymin `
+- The second part if if B/T >= 80% then: `y = mx +c` with `m = 80% of Ymax - Ymin`
 - The above models discourages people to borrow all the liquidity availaible, hence leaving funds for the LP to withdraw if required.
 - The model also discourages huge chunks of loans, since the `B/T` ration discussed above is the value after the loan would be taken out from i.e. `B=B+value`
 
- 
 ### Security Deposit
 
 - Security Deposit is calculated using: `numberOfDays * Amount * SecurityRate`
@@ -49,9 +48,6 @@ The following are yet to be implemenated. These are features to be included in s
 
 - Aave/Compound integration.
 - Fix the liquidation function to point to the reserve deposited rather than the original liquidity ( currently a bug )
-- Fix the interest rate model mathmetical model. Disparancy are arriving. Current implementation relies on Way based calculations, inspired by Aave.
 - Building a JS SDK + Solidity Interface for developers to build there apps upon this, for expand the ecosystem vision of the project.
 - Testing and deploying chainlink integration in `InterestRateStatergy` contract, to calculate equivalent Eth value for any erc20 token. Current MVP does not uses the oracle price fees, hence the numbers would work if the underlying asset is WETH.
-- Fix truffle migration, working with the ui. Current deployment includes manually deployment of contracts.
-- Fix the new interest related payment issues.
 - More Research and Development ( points based priority for borrowers and financial advantages for eg. ).

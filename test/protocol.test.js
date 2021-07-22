@@ -20,7 +20,7 @@ contract("Factory Contract", (accounts) => {
 
   describe("create new liquidity contract and provide liquidity", async () => {
     before(async () => {
-      dai = await Dai.new(10000, { from: accounts[0] });
+      dai = await Dai.new(web3.utils.toWei("10000"), { from: accounts[0] });
 
       urERC20contract = await unERC20.new();
 
@@ -82,42 +82,47 @@ contract("Factory Contract", (accounts) => {
 
     it("adding liquidity", async () => {
       // approve dai spending
-      await dai.approve(factory.address, 5000);
-      assert.equal(await dai.allowance(accounts[0], factory.address), 5000);
+      await dai.approve(factory.address, web3.utils.toWei("5000"));
+      assert.equal(
+        await dai.allowance(accounts[0], factory.address),
+        web3.utils.toWei("5000")
+      );
 
-      await factory.addLiquidity(4000, dai.address);
-      assert.equal(await dai.balanceOf(daiAddress), 4000);
+      await factory.addLiquidity(web3.utils.toWei("4000"), dai.address);
+      assert.equal(await dai.balanceOf(daiAddress), web3.utils.toWei("4000"));
 
       assert.equal(
         await daiTokenWrapper.methods.getTotalLiquidity().call(),
-        4000
+        web3.utils.toWei("4000")
       );
 
       const getLiquidityFromDataProvider = await dataProvider.getTotalLiquidity(
         dai.address
       );
-      assert.equal(getLiquidityFromDataProvider, 4000);
+      assert.equal(getLiquidityFromDataProvider, web3.utils.toWei("4000"));
     });
 
     it("withdraw liquidity", async () => {
-      await factory.withdrawLiquidity(200, dai.address, { from: accounts[0] });
+      await factory.withdrawLiquidity(web3.utils.toWei("200"), dai.address, {
+        from: accounts[0],
+      });
       assert.equal(
         await daiTokenWrapper.methods.getTotalLiquidity().call(),
-        3800
+        web3.utils.toWei("3800")
       );
 
       const getLiquidityFromDataProvider = await dataProvider.getTotalLiquidity(
         dai.address
       );
 
-      assert.equal(getLiquidityFromDataProvider, 3800);
+      assert.equal(getLiquidityFromDataProvider, web3.utils.toWei("3800"));
     });
 
     it("add back liquiditiy", async () => {
-      await factory.addLiquidity(200, dai.address);
+      await factory.addLiquidity(web3.utils.toWei("200"), dai.address);
       assert.equal(
         await daiTokenWrapper.methods.getTotalLiquidity().call(),
-        4000
+        web3.utils.toWei("4000")
       );
     });
 
@@ -129,7 +134,7 @@ contract("Factory Contract", (accounts) => {
       assert.equal(dataInput[0], 10);
       assert.equal(dataInput[1], 5);
       assert.equal(dataInput[2], 0);
-      assert.equal(dataInput[3], 4000);
+      assert.equal(dataInput[3], web3.utils.toWei("4000"));
     });
 
     it("return proxy function", async () => {
@@ -137,28 +142,17 @@ contract("Factory Contract", (accounts) => {
       assert.equal(proxyAddress, daiTokenWrapper._address);
     });
 
-    // it("Interest Calculation Functions Working", async () => {
-    //   const data = await interestRate.calculatePaymentAmount(
-    //     unERC20ProxyContract.address,
-    //     1500,
-    //     1
-    //   );
-    //   console.log(data[0].toNumber(), data[1].toNumber());
-    //   assert.equal(data[1], 75);
-    // });
+    it("Interest Calculation Functions Working", async () => {
+      const amount = web3.utils.toWei("1500"); // 18 digits
 
-    it("interest calculation functions ( y/x approach )", async () => {
       const data = await interestRate.calculatePaymentAmount(
         dai.address,
-        1500,
+        amount,
         1
       );
 
-      assert.equal(data[0], 5);
-      assert.equal(data[1], 75);
-
-      const proxyC = await dataProvider.getContractAddress(dai.address);
-      assert.equal(proxyC, daiAddress);
+      assert.equal(web3.utils.fromWei(data[0]), 6.5);
+      assert.equal(web3.utils.fromWei(data[1]), 75);
     });
 
     it("account[2] issues a loan", async () => {
@@ -166,29 +160,33 @@ contract("Factory Contract", (accounts) => {
 
       assert.equal(await dai.balanceOf(accounts[2]), 2000);
 
-      await factory.payInterest(dai.address, 1500, 1, {
-        value: 80, // calculated abovetruffl
+      await factory.payInterest(dai.address, web3.utils.toWei("1500"), 1, {
+        value: web3.utils.toWei("81.5", "ether"), // calculated above
         from: accounts[2],
       });
 
-      await factory.issueLoan(dai.address, 1, 1500, { from: accounts[2] });
+      await factory.issueLoan(dai.address, 1, web3.utils.toWei("1500"), {
+        from: accounts[2],
+      });
 
       assert.equal(
         await daiTokenWrapper.methods.balanceOf(accounts[2]).call(),
-        1500
+        web3.utils.toWei("1500")
       );
 
       const getUsedLiquidiityFromDataProvider =
         await dataProvider.getUsedLiquidity(dai.address);
-      assert(getUsedLiquidiityFromDataProvider, 1500);
+      assert(getUsedLiquidiityFromDataProvider, web3.utils.toWei("1500"));
     });
 
     it("accounts[2] paybacks the loan", async () => {
-      await factory.paybackLoan(dai.address, 1000, { from: accounts[2] });
+      await factory.paybackLoan(dai.address, web3.utils.toWei("1500"), {
+        from: accounts[2],
+      });
 
       assert.equal(
         await daiTokenWrapper.methods.balanceOf(accounts[2]).call(),
-        500
+        0
       );
     });
 
@@ -198,7 +196,7 @@ contract("Factory Contract", (accounts) => {
         dai.address
       );
 
-      assert(dataUser.borrowedAmount, 500);
+      assert(dataUser.borrowedAmount, web3.utils.toWei("1500"));
 
       const dataLiquiditiyProvider =
         await dataProvider.getUserDetailsForGivenContract(
@@ -206,12 +204,15 @@ contract("Factory Contract", (accounts) => {
           dai.address
         );
 
-      assert(dataUser.borrowedAmount, 4000);
+      assert(dataUser.borrowedAmount, web3.utils.toWei("1500"));
     });
 
     // balanceSupply Test
     it("balanceSupply() test", async () => {
-      assert(await factory.balanceSupply.call(dai.address), 500);
+      assert(
+        await factory.balanceSupply.call(dai.address),
+        web3.utils.toWei("1500")
+      );
     });
 
     // transfer events test
