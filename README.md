@@ -4,7 +4,7 @@
 
 ## Architecture
 
-![](protocol.png)
+![](githubImages/protocol.png)
 
 The protocol aims to provide an underlying layer, upon which developers can build there own apps for special "Time Based" ERC20 tokens.
 
@@ -29,6 +29,8 @@ The protocol consists of two parties: Liquidity Providers and Borrowers
 - The gains made as part of yield farming statergy, LP etc. will be the sole property of the Borrower and has nothing to do with the protocol or it's tokenomics.
 
 ### Interest Model
+
+![](githubImages/diag.png)
 
 - The interest is calculated using piecewise linear equation.
 - The first part is if B/T ratio < 80 % then : `y = mx + c` with `m = 10% of Ymax-Ymin `
