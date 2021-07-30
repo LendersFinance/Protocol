@@ -47,7 +47,6 @@ The following are yet to be implemenated. These are features to be included in s
 ### TODO
 
 - Aave/Compound integration.
-- Fix the liquidation function to point to the reserve deposited rather than the original liquidity ( currently a bug )
 - Building a JS SDK + Solidity Interface for developers to build there apps upon this, for expand the ecosystem vision of the project.
 - Testing and deploying chainlink integration in `InterestRateStatergy` contract, to calculate equivalent Eth value for any erc20 token. Current MVP does not uses the oracle price fees, hence the numbers would work if the underlying asset is WETH.
 - More Research and Development ( points based priority for borrowers and financial advantages for eg. ).
