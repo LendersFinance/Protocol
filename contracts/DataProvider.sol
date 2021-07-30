@@ -10,6 +10,7 @@ contract DataProvider is IDataProvider {
     uint256 public Ymin;
 
     mapping(address => mapping(uint256 => bool)) interestPaid;
+    mapping(address => mapping(address => bool)) securityDeposit;
 
     struct Contract {
         address addr;

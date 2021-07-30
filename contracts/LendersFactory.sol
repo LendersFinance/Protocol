@@ -163,6 +163,10 @@ contract LendersFactory is ILendersFactory {
             "Not the entire interest amount deposited"
         );
         dataProvider.setInterestPaidStatus(msg.sender, amount, true);
+
+        IUNERC20 liquidityContract = IUNERC20(getContractAddress(token));
+
+        liquidityContract.setSecurityDeposit(msg.sender, security);
         emit PaidInterest(msg.sender, token, amount, numberOfDays);
     }
 

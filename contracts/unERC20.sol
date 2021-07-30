@@ -35,8 +35,10 @@ contract UNERC20 is
     mapping(address => uint256) liquidityMapping;
     mapping(address => uint256) borrowersMapping; // time period track
     mapping(address => mapping(address => uint256)) contractInteractions;
+    mapping(address => uint256) securityDeposit;
 
     event LiquidityChange(address sender, uint256 amount);
+    event Liquidated(address liquidator, uint256);
 
     function initialize(
         address _tokenAddress,
@@ -118,6 +120,21 @@ contract UNERC20 is
         _burn(account, amount);
     }
 
+    function getSecurityPending(address user)
+        public
+        override
+        returns (uint256)
+    {
+        return securityDeposit[user];
+    }
+
+    function setSecurityDeposit(address user, uint256 security)
+        public
+        override
+    {
+        securityDeposit[user] = security;
+    }
+
     function balanceSupply()
         external
         override
@@ -130,10 +147,10 @@ contract UNERC20 is
         for (uint256 x = 0; x < balanceSupplyCallPending.length; ) {
             iterator = balanceSupplyCallPending[x];
             uint256 borrowerTime = borrowersMapping[iterator];
-            uint256 balance = balanceOf(iterator);
             if (iterator != address(0) && borrowerTime < block.timestamp) {
-                callerProfit += balance;
-                _burn(iterator, balance);
+                uint256 _callerProfit = securityDeposit[iterator];
+                callerProfit += _callerProfit;
+                _burn(iterator, balanceOf(iterator));
                 balanceSupplyCallPending[x] = balanceSupplyCallPending[
                     balanceSupplyCallPending.length - 1
                 ];
@@ -147,6 +164,8 @@ contract UNERC20 is
         }
 
         uint256 reward = callerProfit.div(10);
+
+        emit Liquidated(msg.sender, callerProfit);
 
         return reward;
     }

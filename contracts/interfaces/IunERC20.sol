@@ -27,4 +27,8 @@ interface IUNERC20 {
     function getUsedLiquidity() external view returns (uint256);
 
     function getTotalLiquidity() external view returns (uint256);
+
+    function setSecurityDeposit(address user, uint256 security) external;
+
+    function getSecurityPending(address user) external returns (uint256);
 }
