@@ -38,7 +38,7 @@ module.exports = {
       provider: () =>
         new HDWalletProvider(
           process.env.mnemonic,
-          `https://rpc-mumbai.matic.today`
+          `https://speedy-nodes-nyc.moralis.io/2b880be7b87620343714ffd3/polygon/mumbai`
         ),
       network_id: 80001,
       confirmations: 2,

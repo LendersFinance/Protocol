@@ -30,6 +30,7 @@ contract InterestRateStatergy is Math {
         uint256 numberOfDays
     ) external view returns (uint256, uint256) {
         IUNERC20 tokenProxy = IUNERC20(dataProvider.getContractAddress(token));
+        // int256 price = dataProvider.getThePrice(0xF9680D99D6C9589e2a93a78A04A279e509205945);
         uint256 interest = calculateInterest(amount, tokenProxy);
         uint256 security = calculateSecurity(amount, numberOfDays);
         return (interest, security);

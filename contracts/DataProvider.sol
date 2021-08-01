@@ -1,6 +1,6 @@
 pragma solidity >0.8.0;
 
-import "@chainlink/contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "./interfaces/IDataProvider.sol";
 import "./interfaces/ILendersFactory.sol";
 import "./interfaces/IunERC20.sol";
@@ -16,6 +16,7 @@ contract DataProvider is IDataProvider {
         address addr;
         string name;
         string symbol;
+        address proxy;
     }
 
     struct ContractDetails {
@@ -87,7 +88,7 @@ contract DataProvider is IDataProvider {
         external
         view
         override
-        returns (uint256)
+        returns (int256)
     {
         AggregatorV3Interface priceFeed =
             AggregatorV3Interface(aggregatorAddress);
@@ -98,7 +99,7 @@ contract DataProvider is IDataProvider {
             uint256 timeStamp,
             uint80 answeredInRound
         ) = priceFeed.latestRoundData();
-        return 0;
+        return price;
     }
 
     function getInterestPaidStatus(address addr, uint256 amount)
@@ -148,9 +149,10 @@ contract DataProvider is IDataProvider {
     function addContract(
         address token,
         string calldata name,
-        string calldata symbol
+        string calldata symbol,
+        address proxyContract
     ) external override {
-        contractList.push(Contract(token, name, symbol));
+        contractList.push(Contract(token, name, symbol, proxyContract));
     }
 
     function getContracts() external view returns (Contract[] memory) {

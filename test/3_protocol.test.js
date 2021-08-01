@@ -144,7 +144,7 @@ contract("Factory Contract", (accounts) => {
 
     it("Interest Calculation Functions Working", async () => {
       const amount = web3.utils.toWei("1500"); // 18 digits
-
+      console.log(amount);
       const data = await interestRate.calculatePaymentAmount(
         dai.address,
         amount,
@@ -159,6 +159,14 @@ contract("Factory Contract", (accounts) => {
       await dai.transfer(accounts[2], 2000);
 
       assert.equal(await dai.balanceOf(accounts[2]), 2000);
+
+      const data = await interestRate.calculatePaymentAmount(
+        dai.address,
+        web3.utils.toWei("1500"),
+        1
+      );
+      console.log(web3.utils.fromWei(data[0]));
+      console.log(web3.utils.fromWei(data[1]));
 
       await factory.payInterest(dai.address, web3.utils.toWei("1500"), 1, {
         value: web3.utils.toWei("81.5", "ether"), // calculated above

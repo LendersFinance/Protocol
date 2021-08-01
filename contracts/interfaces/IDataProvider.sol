@@ -3,7 +3,7 @@ pragma solidity >0.8.0;
 import "./IunERC20.sol";
 
 interface IDataProvider {
-    function getThePrice(address) external returns (uint256);
+    function getThePrice(address) external returns (int256);
 
     function getInterestPaidStatus(address, uint256)
         external
@@ -31,7 +31,8 @@ interface IDataProvider {
     function addContract(
         address token,
         string calldata name,
-        string calldata symbol
+        string calldata symbol,
+        address proxy
     ) external;
 
     function updateStatusIssueLoan(

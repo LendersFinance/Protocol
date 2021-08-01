@@ -11,32 +11,34 @@ const ERC20 = artifacts.require("Dai")
 
 module.exports = async function (deployer, network, accounts) {
   console.log(accounts)
-  deployer.deploy(ERC20, 10000).then(async (dai) => {
-    return deployer.deploy(UNERC20).then(async (result) => {
-      const unerc20Contract = await UNERC20.deployed()
-      await unerc20Contract.initialize(dai.address, "Dai", "Dai", accounts[0])
-      return deployer
-        .deploy(ProxyContract, result.address, "0x")
-        .then((proxy) => {
-          return deployer.deploy(DataProvider).then((dp) => {
-            return deployer.deploy(InterestProvider).then(async (it) => {
-              const itInstance = await InterestProvider.deployed()
-              await itInstance.initialize(dp.address, 5)
-              return deployer
-                .deploy(
-                  LendersFactory,
-                  proxy.address,
-                  result.address,
-                  dp.address,
-                  it.address
-                )
-                .then(async (res) => {
-                  const DataProviderInstance = await DataProvider.deployed()
-                  await DataProviderInstance.initialize(10, 5, res.address)
-                })
+  deployer
+    .deploy(ERC20, "10000000000000000000000000000000000000")
+    .then(async (dai) => {
+      return deployer.deploy(UNERC20).then(async (result) => {
+        const unerc20Contract = await UNERC20.deployed()
+        await unerc20Contract.initialize(dai.address, "Dai", "Dai", accounts[0])
+        return deployer
+          .deploy(ProxyContract, result.address, "0x")
+          .then((proxy) => {
+            return deployer.deploy(DataProvider).then((dp) => {
+              return deployer.deploy(InterestProvider).then(async (it) => {
+                const itInstance = await InterestProvider.deployed()
+                await itInstance.initialize(dp.address, 5)
+                return deployer
+                  .deploy(
+                    LendersFactory,
+                    proxy.address,
+                    result.address,
+                    dp.address,
+                    it.address
+                  )
+                  .then(async (res) => {
+                    const DataProviderInstance = await DataProvider.deployed()
+                    await DataProviderInstance.initialize(10, 5, res.address)
+                  })
+              })
             })
           })
-        })
+      })
     })
-  })
 }

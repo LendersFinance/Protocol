@@ -3,5 +3,5 @@ const { deployProxy } = require("@openzeppelin/truffle-upgrades")
 const Wrapper = artifacts.require("Dai")
 
 module.exports = async function (deployer) {
-  deployer.deploy(Wrapper, 10000)
+  deployer.deploy(Wrapper, "10000000000000000000000000000000000000")
 }

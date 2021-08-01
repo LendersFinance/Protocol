@@ -62,9 +62,8 @@ contract LendersFactory is ILendersFactory {
         IUNERC20 unERC20 = IUNERC20(proxyContractToken);
         unERC20.initialize(token, name, symbol, admin);
 
-        dataProvider.addContract(token, name, symbol);
-
         proxyMapping[IERC20(token)] = proxyContractToken;
+        dataProvider.addContract(token, name, symbol, proxyContractToken);
     }
 
     function addLiquidity(uint256 amount, IERC20 token) external override {
