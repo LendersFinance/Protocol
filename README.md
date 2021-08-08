@@ -2,6 +2,8 @@
 
 # Protocol
 
+Explaination Video: [Link](https://youtu.be/G3rx96LbEBs)
+
 ## Architecture
 
 ![](githubImages/protocol.png)
